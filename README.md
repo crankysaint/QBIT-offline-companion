@@ -27,4 +27,4 @@ This repository now contains a minimal PlatformIO firmware at the repository roo
 [env:esp32-c3-supermini]
 ```
 
-If your button or display pins differ, override the `QBIT_BUTTON_PIN`, `QBIT_I2C_SDA_PIN`, and `QBIT_I2C_SCL_PIN` build flags in `/home/runner/work/QBIT-offline-companion/QBIT-offline-companion/platformio.ini`.
+If your button or display pins differ, override the `QBIT_BUTTON_PIN`, `QBIT_I2C_SDA_PIN`, and `QBIT_I2C_SCL_PIN` build flags in the repository-root `platformio.ini`.

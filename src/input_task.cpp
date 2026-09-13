@@ -51,8 +51,9 @@ void inputTask(void *param) {
             pressedAt = now;
         } else if (pressed && wasPressed && !longPressSent && (now - pressedAt) >= kLongPressMs) {
             const InputEvent event{InputEventType::LongPress, now};
-            xQueueSend(g_inputEventQueue, &event, 0);
-            longPressSent = true;
+            if (xQueueSend(g_inputEventQueue, &event, 0) == pdTRUE) {
+                longPressSent = true;
+            }
         } else if (!pressed && wasPressed) {
             wasPressed = false;
             releasedAt = now;
@@ -65,4 +66,3 @@ void inputTask(void *param) {
         vTaskDelay(pdMS_TO_TICKS(kPollDelayMs));
     }
 }
-

@@ -71,25 +71,27 @@ void displayTask(void *param) {
 
     for (;;) {
         const uint32_t now = millis();
-        InputEvent event;
-        while (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
-            if (event.type == InputEventType::Tap) {
-                gifPlayerNextFace();
-                setOverlay("Face", gifPlayerCurrentFaceName());
-            } else if (event.type == InputEventType::LongPress) {
-                gifPlayerNextSpeed();
-                setOverlay("Mode", gifPlayerCurrentSpeedName());
-            }
-        }
-
         if (g_state == AppState::BootAnim) {
             drawBootFrame(now - g_stateStartedAt);
             if ((now - g_stateStartedAt) >= kBootDurationMs) {
                 g_state = AppState::GifPlayback;
                 g_stateStartedAt = now;
                 setOverlay("Face", gifPlayerCurrentFaceName());
+                if (g_inputEventQueue != nullptr) {
+                    xQueueReset(g_inputEventQueue);
+                }
             }
         } else {
+            InputEvent event;
+            while (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
+                if (event.type == InputEventType::Tap) {
+                    gifPlayerNextFace();
+                    setOverlay("Face", gifPlayerCurrentFaceName());
+                } else if (event.type == InputEventType::LongPress) {
+                    gifPlayerNextSpeed();
+                    setOverlay("Speed", gifPlayerCurrentSpeedName());
+                }
+            }
             gifPlayerRenderFrame(now);
             drawOverlay();
             g_display->sendBuffer();
@@ -98,4 +100,3 @@ void displayTask(void *param) {
         vTaskDelay(pdMS_TO_TICKS(kFrameDelayMs));
     }
 }
-

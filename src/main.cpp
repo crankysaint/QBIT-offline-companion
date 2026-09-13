@@ -24,11 +24,20 @@ void setup() {
     u8g2.begin();
     u8g2.setContrast(0x80);
 
-    inputTaskInit();
-    displayTaskInit(u8g2);
+    if (!inputTaskInit() || !displayTaskInit(u8g2)) {
+        for (;;) {
+            delay(1000);
+        }
+    }
 
-    xTaskCreate(displayTask, "display", 6144, nullptr, 2, nullptr);
-    xTaskCreate(inputTask, "input", 2048, nullptr, 2, nullptr);
+    const BaseType_t displayTaskOk = xTaskCreate(displayTask, "display", 6144, nullptr, 2, nullptr);
+    const BaseType_t inputTaskOk = xTaskCreate(inputTask, "input", 2048, nullptr, 2, nullptr);
+
+    if (displayTaskOk != pdPASS || inputTaskOk != pdPASS) {
+        for (;;) {
+            delay(1000);
+        }
+    }
 }
 
 void loop() {
