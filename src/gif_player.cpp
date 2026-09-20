@@ -23,6 +23,10 @@ size_t g_animationIndex = 0;
 
 constexpr uint8_t kBackgroundColor = 0x00;
 constexpr uint8_t kMainColor = 0x0F;
+constexpr uint8_t kEyeWidth = 38;
+constexpr uint8_t kEyeHeight = 38;
+constexpr uint8_t kEyeBorderRadius = 10;
+constexpr int kEyeSpacing = 14;
 
 constexpr FaceProfile kFaces[] = {
     {"Default", DEFAULT, DEFAULT, false, false},
@@ -86,10 +90,10 @@ bool gifPlayerInit(Adafruit_SSD1327 &display) {
 
     g_roboEyes->begin(128, 128, 60);
     g_roboEyes->setDisplayColors(kBackgroundColor, kMainColor);
-    g_roboEyes->setWidth(38, 38);
-    g_roboEyes->setHeight(38, 38);
-    g_roboEyes->setBorderradius(10, 10);
-    g_roboEyes->setSpacebetween(14);
+    g_roboEyes->setWidth(kEyeWidth, kEyeWidth);
+    g_roboEyes->setHeight(kEyeHeight, kEyeHeight);
+    g_roboEyes->setBorderradius(kEyeBorderRadius, kEyeBorderRadius);
+    g_roboEyes->setSpacebetween(kEyeSpacing);
     g_roboEyes->setAutoblinker(ON, 3, 2);
     g_roboEyes->setIdleMode(ON, 2, 2);
     applyCurrentFace();

@@ -42,7 +42,7 @@ void setup() {
     }
 
     const BaseType_t displayTaskOk = xTaskCreate(displayTask, "display", 6144, nullptr, 2, nullptr);
-    const BaseType_t inputTaskOk = xTaskCreate(inputTask, "input", 2048, nullptr, 2, nullptr);
+    const BaseType_t inputTaskOk = xTaskCreate(inputTask, "input", 2048, nullptr, 3, nullptr);
 
     if (displayTaskOk != pdPASS || inputTaskOk != pdPASS) {
         for (;;) {
