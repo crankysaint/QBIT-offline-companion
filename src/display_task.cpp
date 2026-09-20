@@ -101,7 +101,7 @@ void displayTask(void *param) {
             }
         } else {
             InputEvent event;
-            while (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
+            if (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
                 if (event.type == InputEventType::Tap) {
                     gifPlayerNextFace();
                     setOverlay("Face", gifPlayerCurrentFaceName());
