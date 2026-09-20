@@ -19,7 +19,7 @@ Adafruit_SSD1327 *g_display = nullptr;
 AppState g_state = AppState::BootAnim;
 uint32_t g_stateStartedAt = 0;
 uint32_t g_overlayUntilMs = 0;
-char g_overlayText[24] = {0};
+char g_overlayText[48] = {0};
 
 constexpr uint32_t kBootDurationMs = 1800;
 constexpr uint32_t kFrameDelayMs = 20;
@@ -101,7 +101,12 @@ void displayTask(void *param) {
             }
         } else {
             InputEvent event;
-            if (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
+            bool hasEvent = false;
+            while (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
+                hasEvent = true;
+            }
+
+            if (hasEvent) {
                 if (event.type == InputEventType::Tap) {
                     gifPlayerNextFace();
                     setOverlay("Face", gifPlayerCurrentFaceName());

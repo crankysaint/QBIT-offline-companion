@@ -21,6 +21,17 @@ bool isPressed() {
     return rawHigh;
 #endif
 }
+
+void queueLatestEvent(const InputEvent &event) {
+    if (g_inputEventQueue == nullptr) {
+        return;
+    }
+
+    if (xQueueSend(g_inputEventQueue, &event, 0) != pdTRUE) {
+        xQueueReset(g_inputEventQueue);
+        xQueueSend(g_inputEventQueue, &event, 0);
+    }
+}
 }  // namespace
 
 QueueHandle_t g_inputEventQueue = nullptr;
@@ -51,14 +62,14 @@ void inputTask(void *param) {
             pressedAt = now;
         } else if (pressed && wasPressed && !longPressSent && (now - pressedAt) >= kLongPressMs) {
             const InputEvent event{InputEventType::LongPress, now};
-            xQueueSend(g_inputEventQueue, &event, 0);
+            queueLatestEvent(event);
             longPressSent = true;
         } else if (!pressed && wasPressed) {
             wasPressed = false;
             releasedAt = now;
             if (!longPressSent && (now - pressedAt) >= kDebounceMs) {
                 const InputEvent event{InputEventType::Tap, now};
-                xQueueSend(g_inputEventQueue, &event, 0);
+                queueLatestEvent(event);
             }
         }
 
