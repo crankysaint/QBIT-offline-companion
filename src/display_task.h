@@ -1,10 +1,9 @@
 #ifndef DISPLAY_TASK_H
 #define DISPLAY_TASK_H
 
-#include <U8g2lib.h>
+#include <Adafruit_SSD1327.h>
 
-bool displayTaskInit(U8G2 &display);
+bool displayTaskInit(Adafruit_SSD1327 &display);
 void displayTask(void *param);
 
 #endif
-

@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include <U8g2lib.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1327.h>
 #include <Wire.h>
 
 #include "display_task.h"
@@ -13,18 +14,28 @@
 #define QBIT_I2C_SCL_PIN 21
 #endif
 
-U8G2_SSD1327_MIDAS_128X128_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+#ifndef QBIT_I2C_ADDRESS
+#define QBIT_I2C_ADDRESS 0x3D
+#endif
+
+Adafruit_SSD1327 display(128, 128, &Wire, -1);
 
 void setup() {
     Serial.begin(115200);
     Serial.setDebugOutput(false);
 
     Wire.begin(QBIT_I2C_SDA_PIN, QBIT_I2C_SCL_PIN);
-    u8g2.setBusClock(400000);
-    u8g2.begin();
-    u8g2.setContrast(0x80);
+    Wire.setClock(400000);
 
-    if (!inputTaskInit() || !displayTaskInit(u8g2)) {
+    if (!display.begin(QBIT_I2C_ADDRESS)) {
+        for (;;) {
+            delay(1000);
+        }
+    }
+    display.clearDisplay();
+    display.display();
+
+    if (!inputTaskInit() || !displayTaskInit(display)) {
         for (;;) {
             delay(1000);
         }

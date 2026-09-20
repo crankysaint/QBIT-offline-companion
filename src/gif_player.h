@@ -2,14 +2,13 @@
 #define GIF_PLAYER_H
 
 #include <Arduino.h>
-#include <U8g2lib.h>
+#include <Adafruit_SSD1327.h>
 
-bool gifPlayerInit(U8G2 &display);
+bool gifPlayerInit(Adafruit_SSD1327 &display);
 void gifPlayerNextFace();
-void gifPlayerNextSpeed();
+void gifPlayerTriggerNextAnimation();
 const char *gifPlayerCurrentFaceName();
-const char *gifPlayerCurrentSpeedName();
+const char *gifPlayerCurrentAnimationName();
 void gifPlayerRenderFrame(uint32_t nowMs);
 
 #endif
-
