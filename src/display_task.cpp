@@ -106,9 +106,7 @@ void displayTask(void *param) {
                     gifPlayerNextFace();
                     setOverlay("Face", gifPlayerCurrentFaceName());
                 } else if (event.type == InputEventType::LongPress) {
-                    const char *animationName = gifPlayerCurrentAnimationName();
-                    gifPlayerTriggerNextAnimation();
-                    setOverlay("Anim", animationName);
+                    setOverlay("Anim", gifPlayerTriggerNextAnimation());
                 }
             }
             gifPlayerRenderFrame(now);

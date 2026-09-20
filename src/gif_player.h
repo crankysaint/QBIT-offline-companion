@@ -6,7 +6,7 @@
 
 bool gifPlayerInit(Adafruit_SSD1327 &display);
 void gifPlayerNextFace();
-void gifPlayerTriggerNextAnimation();
+const char *gifPlayerTriggerNextAnimation();
 const char *gifPlayerCurrentFaceName();
 const char *gifPlayerCurrentAnimationName();
 void gifPlayerRenderFrame(uint32_t nowMs);

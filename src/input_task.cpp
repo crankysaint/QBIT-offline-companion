@@ -51,9 +51,8 @@ void inputTask(void *param) {
             pressedAt = now;
         } else if (pressed && wasPressed && !longPressSent && (now - pressedAt) >= kLongPressMs) {
             const InputEvent event{InputEventType::LongPress, now};
-            if (xQueueSend(g_inputEventQueue, &event, 0) == pdTRUE) {
-                longPressSent = true;
-            }
+            xQueueSend(g_inputEventQueue, &event, 0);
+            longPressSent = true;
         } else if (!pressed && wasPressed) {
             wasPressed = false;
             releasedAt = now;

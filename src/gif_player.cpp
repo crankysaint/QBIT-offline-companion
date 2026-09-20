@@ -101,9 +101,11 @@ void gifPlayerNextFace() {
     applyCurrentFace();
 }
 
-void gifPlayerTriggerNextAnimation() {
+const char *gifPlayerTriggerNextAnimation() {
+    const char *animationName = currentAnimation().name;
     currentAnimation().play();
     g_animationIndex = (g_animationIndex + 1) % (sizeof(kAnimations) / sizeof(kAnimations[0]));
+    return animationName;
 }
 
 const char *gifPlayerCurrentFaceName() {
