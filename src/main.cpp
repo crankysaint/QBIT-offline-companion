@@ -18,7 +18,7 @@
 #define QBIT_I2C_ADDRESS 0x3D
 #endif
 
-Adafruit_SSD1327 display(128, 128, &Wire, -1);
+Adafruit_SSD1327 oledDisplay(128, 128, &Wire, -1);
 
 void setup() {
     Serial.begin(115200);
@@ -27,15 +27,15 @@ void setup() {
     Wire.begin(QBIT_I2C_SDA_PIN, QBIT_I2C_SCL_PIN);
     Wire.setClock(400000);
 
-    if (!display.begin(QBIT_I2C_ADDRESS)) {
+    if (!oledDisplay.begin(QBIT_I2C_ADDRESS)) {
         for (;;) {
             delay(1000);
         }
     }
-    display.clearDisplay();
-    display.display();
+    oledDisplay.clearDisplay();
+    oledDisplay.display();
 
-    if (!inputTaskInit() || !displayTaskInit(display)) {
+    if (!inputTaskInit() || !displayTaskInit(oledDisplay)) {
         for (;;) {
             delay(1000);
         }

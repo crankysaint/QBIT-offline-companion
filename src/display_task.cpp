@@ -114,6 +114,7 @@ void displayTask(void *param) {
                     setOverlay("Anim", gifPlayerTriggerNextAnimation());
                 }
             }
+            g_display->clearDisplay();
             gifPlayerRenderFrame(now);
             drawOverlay();
             g_display->display();

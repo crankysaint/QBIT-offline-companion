@@ -122,5 +122,5 @@ void gifPlayerRenderFrame(uint32_t nowMs) {
     if (g_display == nullptr || g_roboEyes == nullptr) {
         return;
     }
-    g_roboEyes->update();
+    g_roboEyes->drawEyes();
 }
