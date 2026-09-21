@@ -27,7 +27,13 @@ void queueLatestEvent(const InputEvent &event) {
         return;
     }
 
-    xQueueOverwrite(g_inputEventQueue, &event);
+    if (xQueueSend(g_inputEventQueue, &event, 0) == pdTRUE) {
+        return;
+    }
+
+    InputEvent discardedEvent;
+    xQueueReceive(g_inputEventQueue, &discardedEvent, 0);
+    xQueueSend(g_inputEventQueue, &event, 0);
 }
 }  // namespace
 
@@ -36,7 +42,7 @@ QueueHandle_t g_inputEventQueue = nullptr;
 bool inputTaskInit() {
     pinMode(QBIT_BUTTON_PIN, QBIT_BUTTON_ACTIVE_LOW ? INPUT_PULLUP : INPUT);
     if (g_inputEventQueue == nullptr) {
-        g_inputEventQueue = xQueueCreate(1, sizeof(InputEvent));
+        g_inputEventQueue = xQueueCreate(4, sizeof(InputEvent));
     }
     return g_inputEventQueue != nullptr;
 }

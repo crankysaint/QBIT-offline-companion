@@ -9,6 +9,6 @@ void gifPlayerNextFace();
 const char *gifPlayerTriggerNextAnimation();
 const char *gifPlayerCurrentFaceName();
 const char *gifPlayerCurrentAnimationName();
-void gifPlayerRenderFrame(uint32_t nowMs);
+void gifPlayerRenderFrame();
 
 #endif

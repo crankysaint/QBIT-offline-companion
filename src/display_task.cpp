@@ -101,12 +101,7 @@ void displayTask(void *param) {
             }
         } else {
             InputEvent event;
-            bool hasEvent = false;
-            while (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
-                hasEvent = true;
-            }
-
-            if (hasEvent) {
+            if (g_inputEventQueue != nullptr && xQueueReceive(g_inputEventQueue, &event, 0) == pdTRUE) {
                 if (event.type == InputEventType::Tap) {
                     gifPlayerNextFace();
                     setOverlay("Face", gifPlayerCurrentFaceName());
@@ -115,7 +110,7 @@ void displayTask(void *param) {
                 }
             }
             g_display->clearDisplay();
-            gifPlayerRenderFrame(now);
+            gifPlayerRenderFrame();
             drawOverlay();
             g_display->display();
         }

@@ -120,9 +120,7 @@ const char *gifPlayerCurrentAnimationName() {
     return currentAnimation().name;
 }
 
-void gifPlayerRenderFrame(uint32_t nowMs) {
-    (void)nowMs;
-
+void gifPlayerRenderFrame() {
     if (g_display == nullptr || g_roboEyes == nullptr) {
         return;
     }
