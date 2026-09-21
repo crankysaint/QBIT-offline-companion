@@ -1,6 +1,7 @@
 #include "gif_player.h"
 
 #include <FluxGarage_RoboEyes.h>
+#include <freertos/semphr.h>
 
 namespace {
 struct FaceProfile {
@@ -16,8 +17,8 @@ struct OneShotAnimation {
     void (*play)();
 };
 
-Adafruit_SSD1327 *g_display = nullptr;
 RoboEyes<Adafruit_SSD1327> *g_roboEyes = nullptr;
+SemaphoreHandle_t g_roboEyesMutex = nullptr;
 size_t g_faceIndex = 0;
 size_t g_animationIndex = 0;
 
@@ -78,12 +79,21 @@ void applyCurrentFace() {
     g_roboEyes->setCuriosity(face.curiosity ? ON : OFF);
     g_roboEyes->setSweat(face.sweat ? ON : OFF);
 }
+
+bool lockRoboEyes() {
+    return g_roboEyesMutex != nullptr && xSemaphoreTake(g_roboEyesMutex, portMAX_DELAY) == pdTRUE;
+}
 }  // namespace
 
 bool gifPlayerInit(Adafruit_SSD1327 &display) {
-    g_display = &display;
     static RoboEyes<Adafruit_SSD1327> roboEyes(display);
     g_roboEyes = &roboEyes;
+    if (g_roboEyesMutex == nullptr) {
+        g_roboEyesMutex = xSemaphoreCreateMutex();
+    }
+    if (g_roboEyesMutex == nullptr || !lockRoboEyes()) {
+        return false;
+    }
 
     g_faceIndex = 0;
     g_animationIndex = 0;
@@ -97,32 +107,52 @@ bool gifPlayerInit(Adafruit_SSD1327 &display) {
     g_roboEyes->setAutoblinker(ON, 3, 2);
     g_roboEyes->setIdleMode(ON, 2, 2);
     applyCurrentFace();
+    xSemaphoreGive(g_roboEyesMutex);
     return true;
 }
 
 void gifPlayerNextFace() {
+    if (!lockRoboEyes()) {
+        return;
+    }
     g_faceIndex = (g_faceIndex + 1) % (sizeof(kFaces) / sizeof(kFaces[0]));
     applyCurrentFace();
+    xSemaphoreGive(g_roboEyesMutex);
 }
 
 const char *gifPlayerTriggerNextAnimation() {
+    if (!lockRoboEyes()) {
+        return "";
+    }
     const char *animationName = currentAnimation().name;
     currentAnimation().play();
     g_animationIndex = (g_animationIndex + 1) % (sizeof(kAnimations) / sizeof(kAnimations[0]));
+    xSemaphoreGive(g_roboEyesMutex);
     return animationName;
 }
 
 const char *gifPlayerCurrentFaceName() {
-    return currentFace().name;
+    if (!lockRoboEyes()) {
+        return "";
+    }
+    const char *faceName = currentFace().name;
+    xSemaphoreGive(g_roboEyesMutex);
+    return faceName;
 }
 
 const char *gifPlayerCurrentAnimationName() {
-    return currentAnimation().name;
+    if (!lockRoboEyes()) {
+        return "";
+    }
+    const char *animationName = currentAnimation().name;
+    xSemaphoreGive(g_roboEyesMutex);
+    return animationName;
 }
 
 void gifPlayerRenderFrame() {
-    if (g_display == nullptr || g_roboEyes == nullptr) {
+    if (g_roboEyes == nullptr || !lockRoboEyes()) {
         return;
     }
     g_roboEyes->drawEyes();
+    xSemaphoreGive(g_roboEyesMutex);
 }
